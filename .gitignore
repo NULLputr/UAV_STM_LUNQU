@@ -1,0 +1,42 @@
+# ###########################################################
+# 适用于：STM32 + Keil MDK + EIDE + VSCode 工程
+# 仓库根目录：uav_F570/UAV_570
+# ###########################################################
+
+# 1. Keil 编译生成的所有中间文件/日志/缓存
+*.crf
+*.htm
+*.dep
+*.lnp
+*.sct
+*.bak
+*.o
+*.d
+*.map
+*.axf
+*.elf
+*.hex
+*.bin
+
+# 2. Keil 自动生成的冗余目录
+MDK-ARM/.cmsis/
+MDK-ARM/UAV_570/
+UAV_570/
+
+# 3. Keil 用户个人配置（只保留核心.uvprojx）
+MDK-ARM/*.uvoptx
+MDK-ARM/*.uvgui.*
+MDK-ARM/.gitignore
+MDK-ARM/*.code-workspace
+
+# 4. EIDE + VSCode 临时文件
+build/
+output/
+.eide/
+.vscode/
+
+# 5. 系统垃圾文件
+Thumbs.db
+.DS_Store
+*.log
+*.tmp
