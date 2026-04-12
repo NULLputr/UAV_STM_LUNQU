@@ -23,11 +23,9 @@
 #include "usart.h"
 #include "gpio.h"
 
-#include <stdio.h>
-
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include <stdio.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -104,8 +102,7 @@ int main(void)
 
   /* Init scheduler */
   osKernelInitialize();
-	//用户调试定时器
-	HAL_TIM_Base_Start(&htim6);
+
   /* Call init function for freertos objects (in cmsis_os2.c) */
   MX_FREERTOS_Init();
 
