@@ -23,6 +23,8 @@
 #include "usart.h"
 #include "gpio.h"
 
+#include <stdio.h>
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -99,7 +101,8 @@ int main(void)
 
   /* Init scheduler */
   osKernelInitialize();
-
+	//用户调试定时器
+	HAL_TIM_Base_Start(&htim6);
   /* Call init function for freertos objects (in cmsis_os2.c) */
   MX_FREERTOS_Init();
 
@@ -165,7 +168,27 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+UART_HandleTypeDef *DebugSerial = &huart1;
 
+//print ??
+#if 1
+int fputc(int ch,FILE* stream)
+{
+	while(HAL_OK != HAL_UART_Transmit(DebugSerial,(const uint8_t*)&ch,1,100));
+	return ch;
+}
+#endif
+
+#if 0
+int fputc(int ch, FILE* stream)
+{
+    for (int retry = 0; retry < 3; retry++) {
+        if (HAL_UART_Transmit(&huart1, (uint8_t*)&ch, 1, 100) == HAL_OK)
+            return ch;
+    }
+    return EOF;   // ?????
+}
+#endif
 /* USER CODE END 4 */
 
 /**
