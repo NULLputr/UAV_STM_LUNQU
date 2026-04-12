@@ -32,7 +32,9 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* USER CODE BEGIN PTD */
+uint8_t uart4_recv;
 
+uint8_t uart1_recv;
 /* USER CODE END PTD */
 
 /* Private define ------------------------------------------------------------*/
@@ -96,7 +98,8 @@ int main(void)
   MX_UART4_Init();
   MX_TIM6_Init();
   /* USER CODE BEGIN 2 */
-
+	HAL_UART_Receive_IT(&huart1,&uart1_recv,1);
+	HAL_UART_Receive_IT(&huart4,&uart4_recv,1);
   /* USER CODE END 2 */
 
   /* Init scheduler */
