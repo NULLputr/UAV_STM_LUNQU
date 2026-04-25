@@ -39,9 +39,9 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-#define userconfig_OPEN_CPU_USAGE_CHECK 1
-#define userconfig_OPEN_STACK_CHECK 1
-#define userconfig_OPEN_CHECK_HEAPSIZE 1
+#define userconfig_OPEN_CPU_USAGE_CHECK 0
+#define userconfig_OPEN_STACK_CHECK 0
+#define userconfig_OPEN_CHECK_HEAPSIZE 0
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -67,6 +67,11 @@ const osThreadAttr_t defaultTask_attributes = {
 #if ( 1 == userconfig_OPEN_CPU_USAGE_CHECK ) || ( 1 == userconfig_OPEN_STACK_CHECK ) || ( 1 == userconfig_OPEN_CHECK_HEAPSIZE )
 void CpuUsageCheckTask(void *param);
 #endif
+
+void StartDefaultTask(void *argument);
+void Balance_Task(void *param);
+void ShowTask(void *param);
+
 /* USER CODE END FunctionPrototypes */
 
 void StartDefaultTask(void *argument);
@@ -204,6 +209,12 @@ void MX_FREERTOS_Init(void) {
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
+	
+	//balance task
+	xTaskCreate(Balance_Task,"balance",128*4,NULL,osPriorityNormal,NULL);
+	
+	xTaskCreate(ShowTask,"showtask",128*4,NULL,osPriorityBelowNormal7,NULL);
+	
 	//调试任务
 	#if ( 1 == userconfig_OPEN_CPU_USAGE_CHECK ) || ( 1 == userconfig_OPEN_STACK_CHECK ) || ( 1 == userconfig_OPEN_CHECK_HEAPSIZE )
 

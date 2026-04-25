@@ -19,6 +19,8 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "cmsis_os.h"
+#include "dma.h"
+#include "i2c.h"
 #include "tim.h"
 #include "usart.h"
 #include "gpio.h"
@@ -26,6 +28,8 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
+
+#include "bsp_imu.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -92,12 +96,56 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   MX_USART1_UART_Init();
   MX_UART4_Init();
   MX_TIM6_Init();
+  MX_I2C1_Init();
+  MX_TIM8_Init();
   /* USER CODE BEGIN 2 */
 	HAL_UART_Receive_IT(&huart1,&uart1_recv,1);
 	HAL_UART_Receive_IT(&huart4,&uart4_recv,1);
+	
+//	uint8_t iic_recv = 0xff;
+//	HAL_I2C_Mem_Read(&hi2c1,0x68 << 1,0x00,I2C_MEMADD_SIZE_8BIT,&iic_recv,1,500);
+//	printf("0x%2X\r\n",iic_recv);
+	//�û����Զ�ʱ��
+	HAL_TIM_Base_Start(&htim6);
+	//ʹ��Ӳ��IICʱ��Ҫ
+	//���Ӳ��IIC�Ƿ����BUSY�쳣
+	if( (I2C1->SR2>>1)&0x01 )
+	{
+		HAL_I2C_MspDeInit(&hi2c1);
+
+		//��IIC����ǿ���ͷ�
+		GPIO_InitTypeDef GPIO_InitStruct = {0};
+		GPIO_InitStruct.Pin = GPIO_PIN_6|GPIO_PIN_7;
+		GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+		GPIO_InitStruct.Pull = GPIO_PULLUP;
+		GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+		HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+		HAL_GPIO_WritePin(GPIOB,GPIO_PIN_6,GPIO_PIN_SET);
+		HAL_GPIO_WritePin(GPIOB,GPIO_PIN_7,GPIO_PIN_SET);
+
+		//���³�ʼ��IIC
+		I2C1->CR1 &= ~(1<<0);//��ֹIIC����
+		HAL_Delay(50);
+		I2C1->CR1 |= (1<<0);//����ʹ��
+		I2C1->CR1 |= (1<<15);//���������λ
+		HAL_Delay(50);
+		I2C1->CR1 &= ~(1<<15);
+		MX_I2C1_Init();
+	}
+	//init imc209848
+	pIMUInterface_t imu = &UserICM20948;
+	while(imu->Init())
+	{
+		HAL_Delay(60);
+		HAL_GPIO_TogglePin(UserLED1_GPIO_Port,UserLED1_Pin);
+		NVIC_SystemReset();
+	}
+	
+	
   /* USER CODE END 2 */
 
   /* Init scheduler */
