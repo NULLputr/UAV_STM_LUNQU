@@ -213,7 +213,7 @@ void MX_FREERTOS_Init(void) {
 	//balance task
 	xTaskCreate(Balance_Task,"balance",128*4,NULL,osPriorityNormal,NULL);
 	
-	xTaskCreate(ShowTask,"showtask",128*4,NULL,osPriorityBelowNormal7,NULL);
+	//xTaskCreate(ShowTask,"showtask",128*4,NULL,osPriorityBelowNormal7,NULL);
 	
 	//调试任务
 	#if ( 1 == userconfig_OPEN_CPU_USAGE_CHECK ) || ( 1 == userconfig_OPEN_STACK_CHECK ) || ( 1 == userconfig_OPEN_CHECK_HEAPSIZE )

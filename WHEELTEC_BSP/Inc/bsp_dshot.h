@@ -31,8 +31,8 @@ enum {
 };
 
 typedef struct{
-	uint8_t Telemetry;
-	short throttle;
+	uint8_t Telemetry; //遥控标志位
+	short throttle;    //油门值
 }dshotMotorVal_t;
 
 
