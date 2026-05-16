@@ -19,6 +19,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "cmsis_os.h"
+#include "adc.h"
 #include "dma.h"
 #include "i2c.h"
 #include "tim.h"
@@ -30,6 +31,7 @@
 #include <stdio.h>
 
 #include "bsp_imu.h"
+#include "bsp_adc.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -102,6 +104,7 @@ int main(void)
   MX_TIM6_Init();
   MX_I2C1_Init();
   MX_TIM8_Init();
+  MX_ADC1_Init();
   /* USER CODE BEGIN 2 */
 	HAL_UART_Receive_IT(&huart1,&uart1_recv,1);
 	HAL_UART_Receive_IT(&huart4,&uart4_recv,1);
@@ -145,6 +148,9 @@ int main(void)
 		NVIC_SystemReset();
 	}
 	
+	//电流与电压采集初始化
+	pADCInterface_t adc = &UserADC1;
+	adc->init();
 	
   /* USER CODE END 2 */
 
