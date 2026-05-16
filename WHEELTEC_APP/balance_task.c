@@ -59,9 +59,9 @@ void Balance_Task(void *param)
 		else
 		{
 			m1.throttle = 120;
-			m2.throttle = 220;
-			m3.throttle = 120;
-			m4.throttle = 220;			
+//			m2.throttle = 220;
+//			m3.throttle = 120;
+//			m4.throttle = 220;			
 		}
 		
 		//发送油门指令到电调,先发送最低油门一段时间进行解锁
