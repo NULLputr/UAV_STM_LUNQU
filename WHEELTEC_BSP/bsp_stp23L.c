@@ -17,8 +17,8 @@ static const uint8_t stp23l_bufferlen = sizeof(STP23LSensorTypedef);
 static uint8_t stp23l_buffer[stp23l_bufferlen];
 
 //
-static pRtosDebugInterface_t debug = &RTOSTaskDebug;
-static RtosDebugPrivateVar priv = { 0 };
+//static pRtosDebugInterface_t debug = &RTOSTaskDebug;
+//static RtosDebugPrivateVar priv = { 0 };
 
 uint8_t stp23L_callback(OriData_STP23L_t* buffer)
 {
@@ -125,9 +125,9 @@ uint8_t stp23L_callback(OriData_STP23L_t* buffer)
 					//数据就绪
 					ready=1;
 					
-					uint16_t freq=0;
-					freq = debug->UpdateFreq(&priv);
-					printf("freq:%d , distance=%.3f\r\n",freq,g_readonly_distance);
+//					uint16_t freq=0;
+//					freq = debug->UpdateFreq(&priv);
+//					printf("freq:%d , distance=%.3f\r\n",freq,g_readonly_distance);
 				}
 				
 				//复位所有变量
