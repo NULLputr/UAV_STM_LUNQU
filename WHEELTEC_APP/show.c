@@ -22,13 +22,13 @@ void ShowTask(void *param)
 		float vol = adc->getValue(userconfigADC_VBAT_CHANNEL);
 		
 		vol = (vol/4095.0f)*3.3f * 11.0f;
-		printf("time = %.3f\r\n",vol);
+		//printf("time = %.3f\r\n",vol);
 		
 		float cur = adc->getValue(userconfigADC_Curr_CHANNEL);
 		
 		cur = ((cur/4095.0f) * 3.3f) / 0.2f;
 		
-		printf("cur = %.3f\r\n",cur);
+		//printf("cur = %.3f\r\n",cur);
 		
 		//printf("{B%.3f:%.3f:%.3f}$",attitude.pitch*57.3f,attitude.roll*57.3f,attitude.yaw*57.3f);
 		//printf("time = %.3f\r\n",get_imu_data_time);

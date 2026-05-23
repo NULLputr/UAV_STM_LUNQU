@@ -1,7 +1,17 @@
 #include "usart.h"
 
+//C Lib Include File
+#include <stdio.h>
+
+
 //FreeRTOS Include File
 #include "FreeRTOS.h"
+//#include "tim.h"
+//#include "usart.h"
+#include "queue.h"
+
+//BSP Include File
+#include "bsp_stp23L.h"
 
 extern uint8_t uart1_recv;
 extern uint8_t uart4_recv;
@@ -58,4 +68,59 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 	
 	//根据具体情况发起调度
 	portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+}
+
+
+//DMA′?ê?íê3éó?°?íê3é?D??
+void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
+{
+	#if 1
+	BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+
+	if( huart == &huart5 && HAL_UART_STATE_READY == huart->RxState) 
+	{	
+		extern QueueHandle_t g_xQueuestp23L_Ori;
+
+		
+		if(g_xQueuestp23L_Ori != NULL)
+		{
+			DMABuf_oridata_stp23L.DataLen = Size;
+			xQueueSendFromISR(g_xQueuestp23L_Ori,&DMABuf_oridata_stp23L,&xHigherPriorityTaskWoken);
+		}
+		
+				//启动DMA
+		HAL_UARTEx_ReceiveToIdle_DMA(&huart5,DMABuf_oridata_stp23L.Buf,userconfig_STP23L_DMABUF_LEN);
+	}
+	
+	//主动发起调度
+	portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+	#endif
+	
+	#if 0
+		//检查高优先级任务唤醒
+	BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+
+	if( huart == &huart5 && HAL_UART_STATE_READY == huart->RxState ) 
+	{	
+		//Size存放的内容是DMA已经搬运的数据数量
+		
+		extern QueueHandle_t g_xQueuestp23L_Ori;
+		if( g_xQueuestp23L_Ori!=NULL )
+		{
+			DMABuf_oridata_stp23L.DataLen = Size;
+			xQueueSendFromISR(g_xQueuestp23L_Ori,&DMABuf_oridata_stp23L,&xHigherPriorityTaskWoken);
+		}
+		
+		//直接在中断里解析处理数据，有可能比较耗时，影响其他任务调度的实时性
+
+		//重新启动DMA搬运
+		HAL_UARTEx_ReceiveToIdle_DMA(&huart5,DMABuf_oridata_stp23L.Buf,userconfig_STP23L_DMABUF_LEN);
+	}
+	
+	//主动发起调度
+	portYIELD_FROM_ISR(xHigherPriorityTaskWoken);
+	
+	#endif
+	
+	
 }

@@ -25,11 +25,19 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+
+//FreeRTOS Include File
+#include "queue.h"
+
 #include "queue.h"        
 #include "semphr.h"      
 #include "event_groups.h" 
 #include <stdio.h>
 #include "tim.h"
+#include "usart.h"
+
+//BSP Include File
+#include "bsp_stp23L.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -51,6 +59,10 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
+xQueueHandle g_xQueuestp23L_Ori=NULL;//存放STP23L原始数据
+
+
+
 xSemaphoreHandle HandleMutex_printf;
 /* USER CODE END Variables */
 /* Definitions for defaultTask */
@@ -71,7 +83,7 @@ void CpuUsageCheckTask(void *param);
 void StartDefaultTask(void *argument);
 void Balance_Task(void *param);
 void ShowTask(void *param);
-
+void STP23L_Task(void *param);
 /* USER CODE END FunctionPrototypes */
 
 void StartDefaultTask(void *argument);
@@ -89,8 +101,8 @@ void vApplicationMallocFailedHook(void);
 /* Functions needed when configGENERATE_RUN_TIME_STATS is on */
 __weak void configureTimerForRunTimeStats(void)
 {
-	//HAL_TIM_Base_Start(&htim6);
-		TIM6->CNT = 0;
+		HAL_TIM_Base_Start(&htim6);
+		//TIM6->CNT = 0;
 }
 
 __weak unsigned long getRunTimeCounterValue(void)
@@ -200,6 +212,7 @@ void MX_FREERTOS_Init(void) {
   /* USER CODE END RTOS_TIMERS */
 
   /* USER CODE BEGIN RTOS_QUEUES */
+	g_xQueuestp23L_Ori = xQueueCreate(3,sizeof(OriData_STP23L_t));
   /* add queues, ... */
   /* USER CODE END RTOS_QUEUES */
 
@@ -215,6 +228,8 @@ void MX_FREERTOS_Init(void) {
 	
 	xTaskCreate(ShowTask,"showtask",128*4,NULL,osPriorityBelowNormal7,NULL);
 	
+	
+	xTaskCreate(STP23L_Task,"STP32L",128 * 2,NULL,osPriorityNormal,NULL);
 	//调试任务
 	#if ( 1 == userconfig_OPEN_CPU_USAGE_CHECK ) || ( 1 == userconfig_OPEN_STACK_CHECK ) || ( 1 == userconfig_OPEN_CHECK_HEAPSIZE )
 
@@ -240,6 +255,10 @@ void StartDefaultTask(void *argument)
 {
   /* USER CODE BEGIN StartDefaultTask */
   /* Infinite loop */
+	
+	//启动DMA
+	HAL_UARTEx_ReceiveToIdle_DMA(&huart5,DMABuf_oridata_stp23L.Buf,userconfig_STP23L_DMABUF_LEN);
+	
   for(;;)
   {
 		HAL_GPIO_TogglePin(UserLED1_GPIO_Port,UserLED1_Pin);

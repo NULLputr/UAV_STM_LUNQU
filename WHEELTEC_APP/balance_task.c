@@ -25,7 +25,7 @@ void Balance_Task(void *param)
 	
 	pIMUInterface_t imu = &UserICM20948;
 	IMU_DATA_t imu_ori = {0};
-	pRtosDebugInterface_t debug = &RTOSTaskDebug;
+//	pRtosDebugInterface_t debug = &RTOSTaskDebug;
 	
 	RtosDebugPrivateVar priv = {0};
 	
@@ -43,7 +43,7 @@ void Balance_Task(void *param)
 	{
 		//balance_task_freq = debug->UpdateFreq(&priv);
 		
-		debug->TickStart(&priv);
+		//debug->TickStart(&priv);
 		imu->Update_9axisVal(&imu_ori);
 		//printf("freq:%d\r\n",balance_task_freq);
 		
@@ -58,7 +58,7 @@ void Balance_Task(void *param)
 		}
 		else
 		{
-			m1.throttle = 120;
+//			m1.throttle = 120;
 //			m2.throttle = 220;
 //			m3.throttle = 120;
 //			m4.throttle = 220;			

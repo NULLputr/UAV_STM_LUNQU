@@ -101,10 +101,11 @@ int main(void)
   MX_DMA_Init();
   MX_USART1_UART_Init();
   MX_UART4_Init();
+  MX_UART5_Init();
   MX_TIM6_Init();
-  MX_I2C1_Init();
   MX_TIM8_Init();
   MX_ADC1_Init();
+  MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
 	HAL_UART_Receive_IT(&huart1,&uart1_recv,1);
 	HAL_UART_Receive_IT(&huart4,&uart4_recv,1);
@@ -220,7 +221,6 @@ void SystemClock_Config(void)
     Error_Handler();
   }
 }
-
 /* USER CODE BEGIN 4 */
 UART_HandleTypeDef *DebugSerial = &huart1;
 

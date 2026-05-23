@@ -1103,6 +1103,11 @@
               <FileType>1</FileType>
               <FilePath>..\WHEELTEC_APP\show.c</FilePath>
             </File>
+            <File>
+              <FileName>stp23l_task.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\WHEELTEC_APP\stp23l_task.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -1132,6 +1137,11 @@
               <FileName>bsp_adc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\WHEELTEC_BSP\bsp_adc.c</FilePath>
+            </File>
+            <File>
+              <FileName>bsp_stp23L.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\WHEELTEC_BSP\bsp_stp23L.c</FilePath>
             </File>
           </Files>
         </Group>
