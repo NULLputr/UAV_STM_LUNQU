@@ -1,3 +1,5 @@
+#include "balance.h"
+
 //FreeRtos Include File
 #include <stdio.h>
 #include "FreeRTOS.h"
@@ -41,6 +43,9 @@ static dshotMotorVal_t mA = {0,48},mB={0,48},mC={0,48},mD={0,48};
 //static uint16_t balance_task_freq = 0;
 //static float get_imu_data_time = 0.0;
 
+
+//用于观察飞行器的状态调试变量
+DebugShowType_t debugshow;
 
 //飞行器启动标志
 static int StartFlag = 1;
@@ -110,7 +115,9 @@ void Balance_Task(void *param)
 	
 	//定义4个电机结构体
 //	dshotMotorVal_t m1 = {0,48},m2={0,48},m3={0,48},m4={0,48};
-	
+	//775
+	//剩余油门值 = 1500 - 775 = 725
+	//printf("%d\r\n", weight_to_throttle(140.0f,10.0f));
 	while(1)
 	{
 		//balance_task_freq = debug->UpdateFreq(&priv);
@@ -125,6 +132,8 @@ void Balance_Task(void *param)
 		
 		robot_vol = adc->getValue(userconfigADC_VBAT_CHANNEL);
 		robot_vol = (robot_vol / 4095.0f) * 3.3f * 11.0f;
+		
+
 		//printf("{B%.3f:%.3f:%.3f}$",attitude.pitch*57.3f,attitude.roll*57.3f,attitude.yaw*57.3f);
 		
 		//控制电机测试
@@ -163,6 +172,13 @@ void Balance_Task(void *param)
 			
 			float basethro = weight_to_throttle(140.0f,robot_vol);
 			
+			//当前电机性能：
+			//最大油门：1500附近
+			//最小油门：48
+			//大约700油门值
+			//其中yawratePID分配150油门值
+			//RollRatePID.output和PitchRatePID.output共同分配550
+			
 			mA.throttle = basethro - RollRatePID.output - PitchRatePID.output + YawRatePID.output;
 			mB.throttle = basethro + RollRatePID.output - PitchRatePID.output - YawRatePID.output;
 			mC.throttle = basethro + RollRatePID.output + PitchRatePID.output + YawRatePID.output;
@@ -183,6 +199,16 @@ void Balance_Task(void *param)
 		//发送油门指令到电调,先发送最低油门一段时间进行解锁
 		dshot->set_target(mA,mD,mC,mB);	
 		//get_imu_data_time = debug->UpdateUsedTime(&priv);
+		debugshow.gyrox = imu_ori.gyro.x;
+		debugshow.gyroy = imu_ori.gyro.y;
+		debugshow.gyroz = imu_ori.gyro.z;
+		debugshow.pitch = attitude.pitch;
+		debugshow.roll = attitude.roll;
+		debugshow.yaw = attitude.yaw;
+//		debugshow.targetPitch = TargetCmd.pitch
+//		debugshow.targetRoll = TargetCmd.roll;
+//		debugshow.targetYaw = YawControl;
+//		debugshow.targetHeight = 0;
 		vTaskDelayUntil(&preTime,pdMS_TO_TICKS((1.0f/(float)TaskFreq) * 1000));
 		
 	}
